@@ -1,22 +1,18 @@
 const express = require('express');
 const path = require('path');
 
-// Express uygulaması oluştur
 const app = express();
 
-// Angular statik dosyaları (SSR olmayan kısım için)
-app.use(express.static(path.join(__dirname, 'dist/angular-tour-of-heroes/browser')));
+// Angular'ın build çıktısını servise aç
+app.use(express.static(path.join(__dirname, 'dist/angular-tour-of-heroes')));
 
-// SSR için server tarafındaki render motorunu dahil et
-const ssrApp = require(path.join(__dirname, 'dist/angular-tour-of-heroes/server/main'));
-
-// Angular SSR middleware'i
+// Tüm istekleri Angular uygulamasına yönlendir
 app.get('*', (req, res) => {
-  ssrApp.handle(req, res);
+  res.sendFile(path.join(__dirname, 'dist/angular-tour-of-heroes/index.html'));
 });
 
-// Sunucuyu başlat
+// Uygulamanızı Heroku'nun sağladığı porta bağlayın
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
-  console.log(`Angular app is running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
